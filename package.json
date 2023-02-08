@@ -1,0 +1,31 @@
+{
+  "name": "my-mini-webpack",
+  "version": "1.0.0",
+  "description": "一个简略版的webpack",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shawshank8815/my-mini-webpack.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shawshank8815/my-mini-webpack/issues"
+  },
+  "homepage": "https://github.com/Shawshank8815/my-mini-webpack#readme",
+  "dependencies": {
+    "@babel/parser": "^7.20.15",
+    "@babel/traverse": "^7.20.13",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "ejs": "^3.1.8"
+  }
+}
