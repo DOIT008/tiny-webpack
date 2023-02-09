@@ -2,7 +2,7 @@ import fs from "fs";
 import parser from "@babel/parser";
 import path from "path";
 import traverse from "@babel/traverse";
-import ejs from 'ejs'
+import ejs from 'ejs' // 一个模板工具
 import { transformFromAst } from "babel-core";
 function createAssets(filePath) {
   // 1. 获取文件内容
@@ -26,8 +26,7 @@ function createAssets(filePath) {
   const { code } = transformFromAst(ast, null, {
     presets: ['env'],
   });
-  console.log('----------');
-  console.log(code);
+  // console.log(code);
   return {
     filePath,
     deps,
@@ -55,9 +54,23 @@ const graph = createGraph();
 // 根据生成的图，生成文件
 
 function build(graph) {
-  
+  const template = fs.readFileSync('./bundle.ejs', {
+    encoding: "utf8",
+  })
+ 
+  const data = graph.map(item => { 
+    return {
+      filePath: item.filePath,
+      code:item.code
+    }
+  })
+  const code = ejs.render(template, {data})
+  console.log('data------------',data);
+  // 写入文件
+  fs.writeFileSync("./dist/bundle.js", code);
 }
 
+build(graph)
 
 
 
