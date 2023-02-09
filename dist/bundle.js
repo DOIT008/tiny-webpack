@@ -66,9 +66,26 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.greeting = greeting;
 
+var _user = require("./user.json");
+
+var _user2 = _interopRequireDefault(_user);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+console.log(_user2.default);
+
 function greeting(name) {
   return '你好呀，' + name;
 }
+    },{"./user.json":4}],
+  
+    "4":[function(require,module,exports){ 
+      "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = "{\r\n  \"name\":\"张三\",\r\n  \"children\":[{\r\n    \"name\":\"李四\"\r\n  }]\r\n}";
     },{}],
   
 })

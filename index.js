@@ -4,12 +4,48 @@ import path from "path";
 import traverse from "@babel/traverse";
 import ejs from 'ejs' // 一个模板工具
 import { transformFromAst } from "babel-core";
+// loader
+import { jsonLoader } from "./jsonLoader.js";
+const webpackConfig = {
+  module: {
+    rules: [{
+      test: /.json$/,
+      use:[jsonLoader] // 为啥是数组，因为可能需要多层转换，后一个loader需要前一个loader的处理结果，进行链式调用
+    }]
+  }
+}
+
+
+
 let id = 0;
 function createAssets(filePath) {
   // 1. 获取文件内容
-  const source = fs.readFileSync(filePath, {
+  let source = fs.readFileSync(filePath, {
     encoding: "utf8",
   });
+  // 转换文件
+  const loaders = webpackConfig.module.rules;
+  // 处理上下文对象
+  const loaderContext = {
+    addDeps(dep) { 
+      console.log('dep---',dep);
+    }
+  }
+  loaders.forEach(({ test, use }) => {
+    console.log('filepath--------',Array.isArray(use.reverse));
+    // 检测是否是目标文件格式
+    if (test.test(filePath)) { 
+      console.log(filePath);
+      if (Array.isArray(use)) {
+        // 因为是从后往前的顺序执行
+        use.reverse().forEach(_use => { 
+          source = _use.call(loaderContext,source)
+        })
+      }
+      // 执行loader开始转换
+    }
+  })
+
   // 2. 获取各模块间的依赖关系
   // 怎么获取import呢？两种方式，一种是正则匹配import，一种是使用ast,下面是获取入口文件的ast
   const ast = parser.parse(source, {
@@ -75,7 +111,6 @@ function build(graph) {
   // 写入文件
   fs.writeFileSync("./dist/bundle.js", code);
 }
-
 build(graph)
 
 
