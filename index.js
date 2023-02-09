@@ -39,6 +39,7 @@ function createAssets(filePath) {
 
 // 通过上述的依赖和内容创建图，为啥是图呢，因为存在相互依赖的情况——>a依赖b，b依赖a,所以树描述不了这种情况
 function createGraph() {
+  // 从入口文件开始收集依赖
   const mainAssets = createAssets("./example/main.js");
   // 遍历图
   const queue = [mainAssets];
