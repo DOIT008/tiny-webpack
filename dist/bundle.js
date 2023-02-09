@@ -1,25 +1,30 @@
 (function (modules) {
-  function require(filePath) { 
-    const fn = modules[filePath];
+  function require(id) { 
+    const [fn,mapping] = modules[id];
     const module = {
       exports: {}
     }
-    fn(require, module, module.exports);
+    function localeRequire(filePath) { 
+      const id = mapping[filePath];
+      return require(id)
+    }
+    fn(localeRequire, module, module.exports);
     return module.exports
   }
-  require('./main.js')
+  // 入口,之后会递归调用各个依赖文件,因为id是从0开始的
+  require(0)
 })({
   
-    "./example/main.js":function(require,module,exports){ 
+    "0":[function(require,module,exports){ 
       "use strict";
 
 var _index = require("./index.js");
 
 (0, _index.add)(12, 13);
 console.log('main.js');
-    }
+    },{"./index.js":1}],
   
-    "D:\资料\Git仓库\my-mini-webpack\example\index.js":function(require,module,exports){ 
+    "1":[function(require,module,exports){ 
       "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -34,9 +39,9 @@ console.log((0, _bar.doubleNum)(18));
 function add(m, n) {
   return m + n;
 }
-    }
+    },{"./bar.js":2}],
   
-    "D:\资料\Git仓库\my-mini-webpack\example\bar.js":function(require,module,exports){ 
+    "2":[function(require,module,exports){ 
       "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -44,9 +49,26 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.doubleNum = doubleNum;
 
+var _queen = require("./queen.js");
+
+console.log((0, _queen.greeting)('Mr zhang'));
+
 function doubleNum(n) {
   return n * 2;
 }
-    }
+    },{"./queen.js":3}],
+  
+    "3":[function(require,module,exports){ 
+      "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.greeting = greeting;
+
+function greeting(name) {
+  return '你好呀，' + name;
+}
+    },{}],
   
 })

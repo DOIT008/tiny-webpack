@@ -4,6 +4,7 @@ import path from "path";
 import traverse from "@babel/traverse";
 import ejs from 'ejs' // 一个模板工具
 import { transformFromAst } from "babel-core";
+let id = 0;
 function createAssets(filePath) {
   // 1. 获取文件内容
   const source = fs.readFileSync(filePath, {
@@ -31,6 +32,8 @@ function createAssets(filePath) {
     filePath,
     deps,
     code,
+    mapping: {},
+    id:id++
   };
 }
 
@@ -42,6 +45,7 @@ function createGraph() {
   for (const asset of queue) {
     asset.deps.forEach((item) => {
       const childAssets = createAssets(path.resolve("./example", item));
+      asset.mapping[item] = childAssets.id
       queue.push(childAssets);
     });
   }
@@ -60,11 +64,12 @@ function build(graph) {
  
   const data = graph.map(item => { 
     return {
-      filePath: item.filePath,
-      code:item.code
+      id: item.id,
+      code: item.code,
+      mapping:item.mapping
     }
   })
-  const code = ejs.render(template, {data})
+  const code = ejs.render(template, {data}) //
   console.log('data',data);
   // 写入文件
   fs.writeFileSync("./dist/bundle.js", code);
