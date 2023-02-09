@@ -3,10 +3,10 @@
 其核心文件是根目录下的`index.js` 
 # 使用说明
 安装依赖
-···powershell
+```powershell
  npm install
-···
+```
 运行
-···powershell
+```powershell
  node index.js
-···
+```
