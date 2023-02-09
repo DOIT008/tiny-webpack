@@ -47,13 +47,13 @@ function createGraph() {
   }
   return queue
 }
-const graph = createGraph();
+const graph = createGraph(); // 一个数组
 // console.log(graph);
 
 
 // 根据生成的图，生成文件
-
 function build(graph) {
+  // 模板
   const template = fs.readFileSync('./bundle.ejs', {
     encoding: "utf8",
   })
@@ -65,7 +65,7 @@ function build(graph) {
     }
   })
   const code = ejs.render(template, {data})
-  console.log('data------------',data);
+  console.log('data',data);
   // 写入文件
   fs.writeFileSync("./dist/bundle.js", code);
 }

@@ -9,28 +9,44 @@
   }
   require('./main.js')
 })({
-  './index.js': function (require,module,exports) { 
-    const {doubleNum} = require("./bar.js");
-    console.log(doubleNum(18));
-    
-    function add(m, n) {
-      return m+n;
+  
+    "./example/main.js":function(require,module,exports){ 
+      "use strict";
+
+var _index = require("./index.js");
+
+(0, _index.add)(12, 13);
+console.log('main.js');
     }
-    module.exports = {
-      add
+  
+    "D:\资料\Git仓库\my-mini-webpack\example\index.js":function(require,module,exports){ 
+      "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.add = add;
+
+var _bar = require("./bar.js");
+
+console.log((0, _bar.doubleNum)(18));
+
+function add(m, n) {
+  return m + n;
+}
     }
-  },
-  './main.js': function (require,module,exports) { 
-    const { add } = require("./index.js");
-    add(12,13)
-    console.log('main.js');
-  },
-  "./bar.js": function (require,module,exports) { 
-    function doubleNum(n) {
-      return n * 2;
+  
+    "D:\资料\Git仓库\my-mini-webpack\example\bar.js":function(require,module,exports){ 
+      "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.doubleNum = doubleNum;
+
+function doubleNum(n) {
+  return n * 2;
+}
     }
-    module.exports = {
-      doubleNum
-    }
-  },
+  
 })
