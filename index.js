@@ -6,15 +6,27 @@ import ejs from 'ejs' // 一个模板工具
 import { transformFromAst } from "babel-core";
 // loader
 import { jsonLoader } from "./jsonLoader.js";
+// 插件
+// 在 Webpack 的编译过程中，本质上通过 Tapable 实现了在编译过程中的一种发布订阅者模式的插件 Plugin 机制
+// 其内部有一些列发布订阅模式的API
+import { SyncHook } from "tapable";
+// 引入插件
+import { ChangeOutputPath } from "./ChangeOutputPath.js";
 const webpackConfig = {
   module: {
     rules: [{
       test: /.json$/,
       use:[jsonLoader] // 为啥是数组，因为可能需要多层转换，后一个loader需要前一个loader的处理结果，进行链式调用
     }]
-  }
+  },
+  plugins: [
+    new ChangeOutputPath()
+  ]
 }
-
+// 初始化一个事件
+const hooks = {
+  emitFilePath:new SyncHook(['context'])
+}
 
 
 let id = 0;
@@ -73,6 +85,13 @@ function createAssets(filePath) {
   };
 }
 
+function initPlugins() { 
+  const plugins = webpackConfig.plugins;
+  plugins.forEach(plugin => { 
+    plugin.apply(hooks)
+  })
+}
+initPlugins()
 // 通过上述的依赖和内容创建图，为啥是图呢，因为存在相互依赖的情况——>a依赖b，b依赖a,所以树描述不了这种情况
 function createGraph() {
   // 从入口文件开始收集依赖
@@ -107,9 +126,20 @@ function build(graph) {
     }
   })
   const code = ejs.render(template, {data}) //
-  console.log('data',data);
+  console.log('data', data);
+  // 钩子相关
+  // 默认打包文件路径
+  let outputPath = './dist/bundle.js';
+  // 声明一个上下文
+  const context = {
+    ChangeOutputPath(path) { 
+      outputPath = path
+    }
+  }
+  // 触发事件
+  hooks.emitFilePath.call(context)
   // 写入文件
-  fs.writeFileSync("./dist/bundle.js", code);
+  fs.writeFileSync(outputPath, code);
 }
 build(graph)
 
